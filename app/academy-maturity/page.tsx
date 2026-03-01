@@ -483,7 +483,9 @@ export default function AcademyMaturityPage() {
               Raporu PDF İndir
             </button>
             <a
-              href="/iletisim"
+              href="https://www.kolektif360.com/iletisim"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 bg-slate-900 text-white font-semibold py-4 rounded-xl hover:bg-slate-800 transition-colors shadow-sm"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

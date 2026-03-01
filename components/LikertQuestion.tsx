@@ -41,8 +41,7 @@ export default function LikertQuestion({
               className="sr-only"
             />
             <span className="font-bold text-xs">{option.value}</span>
-            <span className="hidden sm:inline text-xs">{option.label}</span>
-            <span className="sm:hidden text-xs">{option.label}</span>
+            <span className="text-xs">{option.label}</span>
           </label>
         ))}
       </div>
