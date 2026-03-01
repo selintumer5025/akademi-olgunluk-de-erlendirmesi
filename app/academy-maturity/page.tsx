@@ -20,6 +20,7 @@ export default function AcademyMaturityPage() {
   const [consent, setConsent] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [emailLoading, setEmailLoading] = useState(false);
+  const [emailError, setEmailError] = useState(false);
   const [validationError, setValidationError] = useState(false);
   const radarRef = useRef<HTMLDivElement>(null);
 
@@ -101,6 +102,7 @@ export default function AcademyMaturityPage() {
     setEmail("");
     setConsent(false);
     setEmailSent(false);
+    setEmailError(false);
   };
 
   const handleDownloadPDF = async () => {
@@ -112,28 +114,34 @@ export default function AcademyMaturityPage() {
   const handleEmailSubmit = async () => {
     if (!email || !consent || !results) return;
     setEmailLoading(true);
+    setEmailError(false);
     try {
-      await fetch("/api/submit", {
+      const res = await fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
           consent,
           results,
-          answersSummary: answers,
         }),
       });
-      setEmailSent(true);
+      if (res.ok) {
+        setEmailSent(true);
+      } else {
+        setEmailError(true);
+      }
     } catch {
-      // handle error silently
+      setEmailError(true);
     } finally {
       setEmailLoading(false);
     }
   };
 
+  const totalQuestions = DIMENSIONS.reduce((sum, d) => sum + d.questions.length, 0);
+
   const hasSavedProgress =
     Object.keys(answers).length > 0 &&
-    Object.keys(answers).length < 30;
+    Object.keys(answers).length < totalQuestions;
 
   if (screen === "welcome") {
     return (
@@ -187,7 +195,7 @@ export default function AcademyMaturityPage() {
               <div className="bg-amber-500/20 border border-amber-500/30 rounded-xl p-4 mb-4 flex items-center justify-between">
                 <div>
                   <p className="text-amber-200 font-medium text-sm">Kaldığınız yerden devam edin</p>
-                  <p className="text-amber-300/70 text-xs mt-1">{Object.keys(answers).length} / 30 soru tamamlandı</p>
+                  <p className="text-amber-300/70 text-xs mt-1">{Object.keys(answers).length} / {totalQuestions} soru tamamlandı</p>
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -454,6 +462,11 @@ export default function AcademyMaturityPage() {
                 >
                   {emailLoading ? "Gönderiliyor..." : "Raporu Gönder"}
                 </button>
+                {emailError && (
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+                    <p className="text-red-600 text-sm">E-posta gönderilemedi. Lütfen tekrar deneyin veya PDF olarak indirin.</p>
+                  </div>
+                )}
               </div>
             )}
           </div>

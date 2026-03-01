@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { email, consent, results, answersSummary } = body;
+  const { email, consent, results } = body;
 
   if (!email || !consent) {
     return NextResponse.json(
@@ -35,9 +35,6 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-
-  // answersSummary is accepted but not used when SMTP is not configured
-  void answersSummary;
 
   const smtpHost = process.env.SMTP_HOST;
   const smtpUser = process.env.SMTP_USER;
